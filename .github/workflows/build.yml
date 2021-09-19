@@ -11,5 +11,7 @@ jobs:
     - name: Build container
       run: |
         echo $PAT_TOKEN | docker login ghcr.io -u serverboiorg --password-stdin
+        docker build --tag ghcr.io/serverboiorg/workflow-tracking:dev .
+        docker push ghcr.io/serverboiorg/workflow-tracking:dev
       env:
         PAT_TOKEN: ${{ secrets.PAT_TOKEN }}

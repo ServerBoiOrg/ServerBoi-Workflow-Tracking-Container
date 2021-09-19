@@ -40,8 +40,9 @@ type AdvanceWorkflowInput struct {
 func main() {
 	log.Printf("Updating embed")
 	updateEmbed(formWaitingEmbed())
+	ip := getIP()
 	for {
-		resp, err := http.Get("http://127.0.0.1:7032/status")
+		resp, err := http.Get(fmt.Sprintf("%v:7032/status", ip))
 		if err == nil {
 			defer resp.Body.Close()
 			if resp.StatusCode == http.StatusOK {
@@ -101,5 +102,16 @@ func updateEmbed(embed *dt.Embed) {
 		if done {
 			break
 		}
+	}
+}
+
+func getIP() string {
+	resp, err := http.Get("http://checkip.amazonaws.com")
+	if err == nil {
+		defer resp.Body.Close()
+		b, _ := io.ReadAll(resp.Body)
+		return strings.TrimSpace(string(b))
+	} else {
+		return ""
 	}
 }

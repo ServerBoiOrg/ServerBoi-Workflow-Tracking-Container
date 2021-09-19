@@ -5,13 +5,12 @@ on: [push]
 jobs:
   publish-workflow-tracking:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    - name: Build container
+    - name: Push to DockerHub
       run: |
-        echo $PAT_TOKEN | docker login ghcr.io -u serverboiorg --password-stdin
-        docker build --tag ghcr.io/serverboiorg/workflow-tracking:dev .
-        docker push ghcr.io/serverboiorg/workflow-tracking:dev
+        echo $HUB | docker login -u serverboi --password-stdin
+        docker build --tag serverboi/workflow-tracking:amd64-latest .
+        docker push serverboi/workflow-tracking:amd64-latest
       env:
-        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        HUB: ${{ secrets.HUB }}

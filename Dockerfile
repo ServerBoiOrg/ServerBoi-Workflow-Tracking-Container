@@ -1,6 +1,6 @@
 FROM golang:1.16-alpine
 
-LABEL org.opencontainers.image.source="https://github.com/ServerBoiOrg/ServerBoi-Workflow-Container"
+LABEL org.opencontainers.image.source="https://github.com/ServerBoiOrg/ServerBoi-Workflow-Tracking-Container"
 
 RUN apk update
 RUN apk add git

@@ -1,0 +1,15 @@
+name: publish
+
+on: [push]
+
+jobs:
+  publish-workflow-tracking:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build container
+      run: |
+        echo $PAT_TOKEN | docker login ghcr.io -u serverboiorg --password-stdin
+      env:
+        PAT_TOKEN: ${{ secrets.PAT_TOKEN }}

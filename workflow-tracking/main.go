@@ -23,7 +23,7 @@ var (
 )
 
 type StatusResponse struct {
-	Running bool `json:"Status"`
+	Running bool `json:"Running"`
 }
 
 type UpdateEmbedInput struct {

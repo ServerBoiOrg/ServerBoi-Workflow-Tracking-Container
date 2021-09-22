@@ -4,10 +4,13 @@ import (
 	"bytes"
 	dc "discordhttpclient"
 	"encoding/json"
+	"fmt"
 	gu "generalutils"
+	"io"
 	"log"
 	"net/http"
 	ru "responseutils"
+	"strings"
 	"time"
 
 	dt "github.com/awlsring/discordtypes"

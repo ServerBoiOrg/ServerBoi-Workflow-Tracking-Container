@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	ip               = getIP()
 	applicationID    = gu.GetEnvVar("APPLICATION_ID")
 	interactionToken = gu.GetEnvVar("INTERACTION_TOKEN")
 	executionName    = gu.GetEnvVar("EXECUTION_NAME")
@@ -38,10 +39,10 @@ type AdvanceWorkflowInput struct {
 }
 
 func main() {
-	log.Printf("Updating embed")
+	log.Printf("Updating workflow embed")
 	updateEmbed(formWaitingEmbed())
-	ip := getIP()
 	for {
+		log.Print("Checking it local server is up.")
 		resp, err := http.Get(fmt.Sprintf("%v:7032/status", ip))
 		if err == nil {
 			defer resp.Body.Close()
@@ -49,16 +50,20 @@ func main() {
 				status := StatusResponse{}
 				json.NewDecoder(resp.Body).Decode(&status)
 				if status.Running {
-					log.Printf("Online")
+					log.Printf("Local server is online")
 					advanceWorkflow(&AdvanceWorkflowInput{
 						ExecutionName: executionName,
 					})
+					log.Printf("Updating workflow embed")
 					updateEmbed(formCompleteEmbed())
 					break
 				}
+			} else {
+				log.Printf("Status code not 200, retrying")
 			}
 		}
-		log.Printf("Offline. Updating embed")
+		// This may be too frequent
+		log.Printf("Server is offline. Updating embed")
 		updateEmbed(formWaitingEmbed())
 		time.Sleep(time.Duration(30) * time.Second)
 	}

@@ -1,4 +1,4 @@
-FROM amd64/golang:1.17-alpine
+FROM golang:1.17-alpine
 
 LABEL org.opencontainers.image.source="https://github.com/ServerBoiOrg/ServerBoi-Workflow-Tracking-Container"
 

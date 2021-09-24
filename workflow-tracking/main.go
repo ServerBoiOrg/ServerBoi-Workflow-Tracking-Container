@@ -4,6 +4,7 @@ import (
 	"bytes"
 	dc "discordhttpclient"
 	"encoding/json"
+	"fmt"
 	gu "generalutils"
 	"log"
 	"net/http"
@@ -38,16 +39,18 @@ type AdvanceWorkflowInput struct {
 }
 
 func main() {
+	address := "http://service-monitor:7032/status"
 	log.Printf("Updating workflow embed")
 	updateEmbed(formWaitingEmbed())
 	for {
-		log.Print("Checking it local server is up.")
-		resp, err := http.Get("service-monitor:7032/status")
+		log.Printf("Checking if local server is up on %v", address)
+		resp, err := http.Get(address)
 		if err == nil {
 			defer resp.Body.Close()
 			if resp.StatusCode == http.StatusOK {
 				status := StatusResponse{}
 				json.NewDecoder(resp.Body).Decode(&status)
+				log.Printf("Status response: %v", status.Running)
 				if status.Running {
 					log.Printf("Local server is online")
 					advanceWorkflow(&AdvanceWorkflowInput{
@@ -60,11 +63,12 @@ func main() {
 			} else {
 				log.Printf("Status code not 200, retrying")
 			}
+		} else {
+			log.Printf("Error talking to local server %v", err)
 		}
-		// This may be too frequent
 		log.Printf("Server is offline. Updating embed")
 		updateEmbed(formWaitingEmbed())
-		time.Sleep(time.Duration(30) * time.Second)
+		time.Sleep(time.Duration(1) * time.Minute)
 	}
 
 }
@@ -75,18 +79,20 @@ func advanceWorkflow(input *AdvanceWorkflowInput) {
 }
 
 func formWaitingEmbed() *dt.Embed {
-	return ru.CreateWorkflowEmbed(&ru.CreateWorkflowEmbedInput{
-		Status: "🟢 Running",
-		Stage:  "Waiting for Application Container",
-		Color:  ru.DiscordGreen,
-	})
+	return embedTemplate("Waiting for application to start")
 }
 
 func formCompleteEmbed() *dt.Embed {
+	return embedTemplate("Application started")
+}
+
+func embedTemplate(stage string) *dt.Embed {
 	return ru.CreateWorkflowEmbed(&ru.CreateWorkflowEmbedInput{
-		Status: "🟢 Running",
-		Stage:  "Application Container Complete",
-		Color:  ru.DiscordGreen,
+		Name:        "Provision-Server",
+		Description: fmt.Sprintf("WorkflowID: %s", executionName),
+		Status:      "🟢 Running",
+		Stage:       stage,
+		Color:       ru.DiscordGreen,
 	})
 }
 

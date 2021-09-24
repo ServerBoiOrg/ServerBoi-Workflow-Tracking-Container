@@ -7,6 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v3
+      with:
+        buildx-version: latest
+        qemu-version: latest
     - name: Push to DockerHub
       run: |
         echo $HUB | docker login -u serverboi --password-stdin

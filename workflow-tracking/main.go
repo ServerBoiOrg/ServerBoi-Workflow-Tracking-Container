@@ -17,7 +17,6 @@ import (
 )
 
 var (
-	ip               = getIP()
 	applicationID    = gu.GetEnvVar("APPLICATION_ID")
 	interactionToken = gu.GetEnvVar("INTERACTION_TOKEN")
 	executionName    = gu.GetEnvVar("EXECUTION_NAME")
@@ -46,7 +45,7 @@ func main() {
 	updateEmbed(formWaitingEmbed())
 	for {
 		log.Print("Checking it local server is up.")
-		resp, err := http.Get(fmt.Sprintf("%v:7032/status", ip))
+		resp, err := http.Get("service-monitor:7032/status")
 		if err == nil {
 			defer resp.Body.Close()
 			if resp.StatusCode == http.StatusOK {
@@ -110,16 +109,5 @@ func updateEmbed(embed *dt.Embed) {
 		if done {
 			break
 		}
-	}
-}
-
-func getIP() string {
-	resp, err := http.Get("http://checkip.amazonaws.com")
-	if err == nil {
-		defer resp.Body.Close()
-		b, _ := io.ReadAll(resp.Body)
-		return strings.TrimSpace(string(b))
-	} else {
-		return ""
 	}
 }

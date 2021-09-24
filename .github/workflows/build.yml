@@ -10,7 +10,9 @@ jobs:
     - name: Push to DockerHub
       run: |
         echo $HUB | docker login -u serverboi --password-stdin
-        docker build --tag serverboi/workflow-tracking:latest .
-        docker push serverboi/workflow-tracking:latest
+        docker buildx build \
+          --push \
+          --platform linux/arm64/v8,linux/amd64 \
+          --tag serverboi/workflow-tracking:latest . 
       env:
         HUB: ${{ secrets.HUB }}

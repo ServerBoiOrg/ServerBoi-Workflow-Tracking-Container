@@ -39,6 +39,9 @@ type AdvanceWorkflowInput struct {
 }
 
 func main() {
+	advanceWorkflow(&AdvanceWorkflowInput{
+		ExecutionName: executionName,
+	})
 	address := "http://service-monitor:7032/status"
 	log.Printf("Updating workflow embed")
 	updateEmbed(formWaitingEmbed())
